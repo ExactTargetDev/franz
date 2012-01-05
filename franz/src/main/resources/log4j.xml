@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" [
+    <!ENTITY layoutPattern "&#37;d{yyyy-MM-dd HH:mm:ss,SSS} [&#37;X{processName}] [&#37;x] [&#37;t] &#37;-5p &#37;c.&#37;M():&#37;L - &#37;m&#37;n">
+]>
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <!-- Appenders -->
+
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="&layoutPattern;"/>
+        </layout>
+    </appender>
+
+    <!-- Root logger -->
+
+    <root>
+        <level value="WARN"/>
+        <appender-ref ref="console"/>
+    </root>
+
+</log4j:configuration>
