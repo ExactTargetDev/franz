@@ -59,14 +59,6 @@ new FranzServiceConfig {
         roll = Policy.SigHup
       }
     } :: new LoggerConfig {
-      node = "history"
-      level = Level.INFO
-      useParents = false
-      handlers = new FileHandlerConfig {
-       filename = "/var/log/social-franz/history.log"
-       roll = Policy.Daily
-      }
-    } :: new LoggerConfig {
       node = "stats"
       level = Level.INFO
       useParents = false
