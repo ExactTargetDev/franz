@@ -16,11 +16,6 @@ new FranzServiceConfig {
     reporters = new TimeSeriesCollectorConfig
   }
 
-  kafkaProducerProps = new Properties() {
-    put("zk.connect", "localhost:2182")
-    put("serializer.class", "com.exacttarget.franz.ByteEncoder")
-  }
-
   kestrelQueueFolder = "/tmp"
   threadPoolSize = 1
 

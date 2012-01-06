@@ -12,6 +12,7 @@ import com.twitter.ostrich.stats.Stats
 import java.util.concurrent.Executors
 
 class FranzServiceServer(config: FranzServiceConfig) extends Service {
+  val configuration = config
   val services = ListBuffer[Server]()
   var kestrelServer: Kestrel = null
 
