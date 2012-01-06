@@ -33,14 +33,11 @@ new FranzServiceConfig {
     .split(",").foldLeft(Map[String,Int]()){ (m, topic) =>m + (topic -> 1)
   }
 
-  threadPoolSize = (kafkaReadTopics.size + kafkaWriteTopics.size) * 20
+  threadPoolSize = kafkaReadTopics.size * 20
 
   kafkaConsumerProps = new Properties() {
-    load(new FileInputStream("/etc/exacttarget/kafka_zookeeper-c1.properties"))
     putAll(franzProps)
     put("serializer.class", "com.exacttarget.franz.ByteEncoder")
-    //put("zk.connect", "nvqa2s1hc1aggr01.np.local:2181")
-    //put("groupid", "groupid")
   }
 
   kestrelQueueFolder = "/var/spool/kestrel"

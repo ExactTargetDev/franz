@@ -11,12 +11,6 @@ var graphiteProperties: Properties = new Properties() {
 }
 
 new FranzServiceConfig {
-
-  // Add your own config here
-
-  // Where your service will be exposed.
-  thriftPort = 9999
-
   // Ostrich http admin port.  Curl this for stats, etc
   admin.httpPort = 9900
 
@@ -33,14 +27,29 @@ new FranzServiceConfig {
     )
   })
 
-  kafkaProducerProps = new Properties() {
-    //put("zk.connect", "TBD:2181")
-    load(new FileInputStream("/etc/exacttarget/kafka_zookeeper-c1.properties"))
+  val franzProps = new Properties() {
+    load(new FileInputStream("/etc/franz/franz.properties"))
+    //put("kafkaTopics", "test1,test2,test3")
+  }
+
+  kafkaReadTopics = franzProps.get("kafkaReadTopics")
+    .asInstanceOf[String]
+    .split(",").foldLeft(Map[String,Int]()){ (m, topic) =>m + (topic -> 1)
+  }
+
+  kafkaWriteTopics = franzProps.get("kafkaWriteTopics")
+    .asInstanceOf[String]
+    .split(",").foldLeft(Map[String,Int]()){ (m, topic) =>m + (topic -> 1)
+  }
+
+  threadPoolSize = kafkaReadTopics.size * 20
+
+  kafkaConsumerProps = new Properties() {
+    putAll(franzProps)
     put("serializer.class", "com.exacttarget.franz.ByteEncoder")
   }
 
-  kestrelQueueFolder = "/var/kestrel/journal"
-  threadPoolSize = 1
+  kestrelQueueFolder = "/var/spool/kestrel"
 
   loggers =
     new LoggerConfig {

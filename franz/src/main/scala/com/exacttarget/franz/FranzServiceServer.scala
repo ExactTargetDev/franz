@@ -40,7 +40,6 @@ class FranzServiceServer(config: FranzServiceConfig) extends Service {
       default.defaultJournalSize = 16.megabytes
       default.maxMemorySize = 128.megabytes
       default.maxJournalSize = 1.gigabyte
-
     }
 
     kestrelServer = new Kestrel(new QueueBuilder().apply(), kestrelConfig.queues, kestrelConfig.listenAddress,
@@ -48,6 +47,7 @@ class FranzServiceServer(config: FranzServiceConfig) extends Service {
       kestrelConfig.protocol, kestrelConfig.expirationTimerFrequency, kestrelConfig.clientTimeout,
       kestrelConfig.maxOpenTransactions)
     kestrelServer.start()
+    Kestrel.kestrel = kestrelServer
     Stats.addGauge("connections") { Kestrel.sessions.get().toDouble }
 
     Option(config.kafkaConsumerProps.get("hosts")).map ( hosts =>  {
@@ -66,7 +66,7 @@ class FranzServiceServer(config: FranzServiceConfig) extends Service {
 
     if (config.kafkaWriteTopics.size > 0) {
       val streamProducer = new StreamProducer(kestrelServer.queueCollection, config.kafkaWriteTopics.keySet,
-        config.kafkaConsumerProps, Executors.newFixedThreadPool(config.kafkaWriteTopics.size))
+        config.kafkaConsumerProps, Executors.newFixedThreadPool(config.kafkaWriteTopics.size + 1))
       streamProducer.init()
       services += streamProducer
     }

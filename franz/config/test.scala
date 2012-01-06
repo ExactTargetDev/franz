@@ -27,12 +27,29 @@ new FranzServiceConfig {
     )
   })
 
-  kafkaProducerProps = new Properties() {
-    load(new FileInputStream("/etc/exacttarget/kafka_zookeeper-c1.properties"))
+  val franzProps = new Properties() {
+    load(new FileInputStream("/etc/franz/franz.properties"))
+    //put("kafkaTopics", "test1,test2,test3")
+  }
+
+  kafkaReadTopics = franzProps.get("kafkaReadTopics")
+    .asInstanceOf[String]
+    .split(",").foldLeft(Map[String,Int]()){ (m, topic) =>m + (topic -> 1)
+  }
+
+  kafkaWriteTopics = franzProps.get("kafkaWriteTopics")
+    .asInstanceOf[String]
+    .split(",").foldLeft(Map[String,Int]()){ (m, topic) =>m + (topic -> 1)
+  }
+
+  threadPoolSize = kafkaReadTopics.size * 20
+
+  kafkaConsumerProps = new Properties() {
+    putAll(franzProps)
     put("serializer.class", "com.exacttarget.franz.ByteEncoder")
   }
 
-  kestrelQueueFolder = "/var/kestrel/journal"
+  kestrelQueueFolder = "/var/spool/kestrel"
 
   loggers =
     new LoggerConfig {
