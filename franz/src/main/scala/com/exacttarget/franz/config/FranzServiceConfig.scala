@@ -6,11 +6,12 @@ import com.exacttarget.franz.FranzServiceServer
 import java.util.Properties
 
 abstract class FranzServiceConfig extends ServerConfig[FranzServiceServer] {
-  var threadPoolSize: Int = 1
   var kestrelQueueFolder: String = null
 
   var kafkaConsumerProps: Properties = null
-  var kafkaTopics: Map[String, Int] = null
+  var kafkaReadTopics: Map[String, Int] = Map()
+  var kafkaWriteTopics: Map[String, Int] = Map()
+  var threadPoolSize: Int = 1
 
   def apply(runtime: RuntimeEnvironment) = new FranzServiceServer(this)
 }

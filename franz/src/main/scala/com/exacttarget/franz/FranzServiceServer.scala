@@ -6,22 +6,20 @@ import com.twitter.conversions.time._
 import com.twitter.conversions.storage._
 import com.twitter.finagle.builder.Server
 import com.twitter.ostrich.admin.Service
-import com.twitter.util.{FuturePool, JavaTimer}
-import java.util.concurrent.Executors
 import net.lag.kestrel._
 import net.lag.kestrel.config._
 import com.twitter.ostrich.stats.Stats
+import java.util.concurrent.Executors
 
 class FranzServiceServer(config: FranzServiceConfig) extends Service {
   val services = ListBuffer[Server]()
-  val queueWriterExecutor = Executors.newFixedThreadPool(2)
-  var queueWriterPool = FuturePool(queueWriterExecutor)
   var kestrelServer: Kestrel = null
 
   def start() {
     // http://robey.github.com/kestrel/doc/main/api/net/lag/kestrel/config/QueueBuilder.html
     var queueBuilders = List[QueueBuilder]()
-    config.kafkaTopics.keySet.foreach((topic: String) => {
+
+    config.kafkaReadTopics.keySet.union(config.kafkaWriteTopics.keySet).foreach((topic: String) => {
       queueBuilders = queueBuilders ::: List(new QueueBuilder {
         syncJournal = 1.seconds
         name = topic
@@ -33,7 +31,7 @@ class FranzServiceServer(config: FranzServiceConfig) extends Service {
       listenAddress = "0.0.0.0"
       memcacheListenPort = 22133
       textListenPort = 2222
-      queuePath = "/var/spool/kestrel"
+      queuePath = config.kestrelQueueFolder
       clientTimeout = 30.seconds
       expirationTimerFrequency = 1.second
       maxOpenTransactions = 100
@@ -60,10 +58,18 @@ class FranzServiceServer(config: FranzServiceConfig) extends Service {
       }
     )
 
-    val streamConsumer = new StreamConsumer(config, kestrelServer.queueCollection)
-    streamConsumer.init()
+    if (config.kafkaReadTopics.size > 0) {
+      val streamConsumer = new StreamConsumer(config, kestrelServer.queueCollection)
+      streamConsumer.init()
+      services += streamConsumer
+    }
 
-    services += streamConsumer
+    if (config.kafkaWriteTopics.size > 0) {
+      val streamProducer = new StreamProducer(kestrelServer.queueCollection, config.kafkaWriteTopics.keySet,
+        config.kafkaConsumerProps, Executors.newFixedThreadPool(config.kafkaWriteTopics.size))
+      streamProducer.init()
+      services += streamProducer
+    }
   }
 
   def shutdown() {
@@ -78,6 +84,5 @@ class FranzServiceServer(config: FranzServiceConfig) extends Service {
     kestrelServer.shutdown()
 
     services.foreach(close(_))
-    queueWriterExecutor.shutdown()
   }
 }

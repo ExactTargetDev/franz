@@ -19,23 +19,31 @@ new FranzServiceConfig {
   }
 
   val franzProps = new Properties() {
-    //load(new FileInputStream("/etc/franz/franz.properties"))
-    put("kafkaTopics", "test1,test2,test3")
+    load(new FileInputStream("/etc/franz/franz.properties"))
+    //put("kafkaTopics", "test1,test2,test3")
   }
 
-  kafkaTopics = franzProps.get("kafkaTopics")
+  kafkaReadTopics = franzProps.get("kafkaReadTopics")
     .asInstanceOf[String]
     .split(",").foldLeft(Map[String,Int]()){ (m, topic) =>m + (topic -> 1)
   }
 
-  kafkaConsumerProps = new Properties() {
-    //load(new FileInputStream("/etc/exacttarget/kafka_zookeeper-c1.properties"))
-    put("zk.connect", "nvqa2s1hc1aggr01.np.local:2181")
-    put("serializer.class", "com.exacttarget.franz.ByteEncoder")
-    put("groupid", "groupid")
+  kafkaWriteTopics = franzProps.get("kafkaWriteTopics")
+    .asInstanceOf[String]
+    .split(",").foldLeft(Map[String,Int]()){ (m, topic) =>m + (topic -> 1)
   }
 
-  kestrelQueueFolder = "/tmp"
+  threadPoolSize = (kafkaReadTopics.size + kafkaWriteTopics.size) * 20
+
+  kafkaConsumerProps = new Properties() {
+    load(new FileInputStream("/etc/exacttarget/kafka_zookeeper-c1.properties"))
+    putAll(franzProps)
+    put("serializer.class", "com.exacttarget.franz.ByteEncoder")
+    //put("zk.connect", "nvqa2s1hc1aggr01.np.local:2181")
+    //put("groupid", "groupid")
+  }
+
+  kestrelQueueFolder = "/var/spool/kestrel"
 
   loggers =
     new LoggerConfig {
