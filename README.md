@@ -4,6 +4,8 @@ Franz is a [Kestrel](http://github.com/robey/kestrel) interface to [Kafka](http:
 
 # Building
 
+Franz requires SBT 0.7.x. 
+
 ```bash
 sbt update compile
 ```
