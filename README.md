@@ -1,6 +1,8 @@
 # Franz
 
-Franz is a [Kestrel](http://github.com/robey/kestrel) interface to [Kafka](http://incubator.apache.org/kafka/).
+Franz is a [Kestrel](http://github.com/robey/kestrel) interface to [Kafka](http://incubator.apache.org/kafka/).  Franz is designed to be a bridge for non-JVM languages that do not have a full Kafka client implementation.  Since there is a solid memcached client for almost every language, Kestrel is used to read and write data to Kafka.
+
+Franz is also useful if you are looking for local persistent of messages in the case of network failures, etc.  Franz will buffer data to local disk until Kafka becomes available.
 
 # Building
 
