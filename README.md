@@ -52,3 +52,12 @@ This will have Kafka up and running.  Next startup Franz using the steps listed 
 ```
 
 Once this is done, you can look at /var/spool/kestrel to see that the queues are created and have data.  A sample script to consume Kestrel from Ruby is located in src/main/scripts.
+
+```ruby
+require 'rubygems'
+require 'kestrel'
+
+queue = Kestrel::Client.new('localhost:22133')
+queue.set 'testWrite1', 'testing123'
+print queue.get('testRead1')
+```
