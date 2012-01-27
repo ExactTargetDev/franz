@@ -27,14 +27,6 @@ class FranzProject(info: ProjectInfo) extends StandardServiceProject(info)
 
   val kestrel = "net.lag" % "kestrel" % "2.1.3"
 
-  //json
-  val lift_json = "net.liftweb" %% "lift-json" % "2.3"
-  val lift_json_ext = "net.liftweb" %% "lift-json-ext" % "2.3"
-
-  //val slf4jVersion = "1.5.11"
-  //val slf4jApi = "org.slf4j" % "slf4j-api" % slf4jVersion withSources() intransitive()
-  //val slf4jBindings = "org.slf4j" % "slf4j-jdk14" % slf4jVersion withSources() intransitive()
-
   // for tests
   val specs = "org.scala-tools.testing" % "specs_2.8.1" % "1.6.7" % "test" withSources()
   val jmock = "org.jmock" % "jmock" % "2.4.0" % "test"
@@ -42,7 +34,6 @@ class FranzProject(info: ProjectInfo) extends StandardServiceProject(info)
   val cglib = "cglib" % "cglib" % "2.1_3" % "test"
   val asm = "asm" % "asm" % "1.5.3" % "test"
   val objenesis = "org.objenesis" % "objenesis" % "1.1" % "test"
-  //var kafka = "org.linkedin" % "kafka" % "0.7.0-34e24b01"
 
   override def mainClass = Some("com.exacttarget.franz.Main")
 }
