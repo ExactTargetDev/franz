@@ -19,7 +19,7 @@ class FranzProject(info: ProjectInfo) extends StandardServiceProject(info)
   val finagleVersion = "1.9.0"
 
   val finagleCore = "com.twitter" % "finagle-core" % finagleVersion
-  val ostrichExtas = "com.exacttarget" % "ostrich-extras" % "1.0.3"
+  val ostrichExtas = "com.exacttarget" % "ostrich-extras" % "1.0.4"
 
   //kafka
   val log4j = "log4j" % "log4j" % "1.2.16"
